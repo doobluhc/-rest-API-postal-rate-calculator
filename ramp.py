@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Resource, Api, reqparse, abort
 import json
 
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -59,7 +60,7 @@ def abort_if_exceeds_weight_limit(args):
                 return False
             return message
 
-def post_rate_calculation(args, message):
+def post_rate_calculation(args):
     try:
         args["message"]
         return False
@@ -86,8 +87,27 @@ def post_rate_calculation(args, message):
         # Postal rate calcualtion: 
         # for a standard envelop
         if isStandard == True: 
+            if weight_temp > 30.0:
+                weight_over_30 = weight_temp-30.0
+                price_over_30 = weight_over_30*0.8
+                price_under_30 = 30.0*0.49
+            elif weight_temp <= 30.0:
+                price_over_30 = 0.0
+                price_under_30 = weight_temp*0.49
+            post_price = price_over_30 + price_under_30
         # for a non-standard envelop
-         
+        elif isStandard == False: 
+            if weight_temp > 100.0:
+                weight_over_100 = weight_temp-100.0
+                price_over_100 = weight_over_100*2.4
+                price_under_100 = 100.0*0.98
+            elif weight_temp <= 100.0:
+                price_over_100 = 0.0
+                price_under_100 = weight_temp*0.98
+            post_price = price_over_100 + price_under_100
+            
+        return {"message": "the post_price is: " + str(post_price)}
+
 
 class Calculator(Resource):
     def put(self):
@@ -102,6 +122,9 @@ class Calculator(Resource):
         if message != False and message != True: 
             args = message
         #print(args)
+        message = post_rate_calculation(args)
+        if message != False:
+            args = message
         return args   
 
 api.add_resource(Calculator,"/calculator")

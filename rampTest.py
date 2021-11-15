@@ -66,5 +66,17 @@ class Flasktest(unittest.TestCase):
         #print(response.status_code)
         self.assertEqual(response.json()['message'], "weight can not be heavier than 500g or 17.637 ounces")
     
+    def test_standard_evolope(self):
+        tester = app.test_client(self)
+        response = requests.put(BASE + "calculator", {"length_unit" : 'mm', "width" : 100.0, "length":200.0, "weight_unit": "g", "weight": 40.0})
+        #print(response.status_code)
+        self.assertEqual(response.json()['message'], "the post_price is: 22.7")
+
+    def test_non_standard_width_standard_length_standard_weight_evolope(self):
+        tester = app.test_client(self)
+        response = requests.put(BASE + "calculator", {"length_unit" : 'mm', "width" : 200.0, "length":200.0, "weight_unit": "g", "weight": 40.0})
+        print(response)
+        self.assertEqual(response.json()['message'], "the post_price is: 39.2")
+
 if __name__ == '__main__':
     unittest.main()
