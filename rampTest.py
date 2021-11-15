@@ -47,12 +47,24 @@ class Flasktest(unittest.TestCase):
         #print(response.json())
         self.assertEqual(response.json()['message']['weight_unit'], "input json data format must include (str)length unit -> mm or inches , (float)width, (float)length, (str)weight unit -> g or ounces, (float)weight")
 
-    '''
+    
     def test_exceeds_length_limit(self):
         tester = app.test_client(self)
         response = requests.put(BASE + "calculator", {"length_unit" : 'mm', "width" : 10.0, "length":400.0, "weight_unit": "g", "weight": 10.0})
-        print(response.status_code)
-        self.assertEqual(response.json()['message']['weight_unit'], "length can not be larger than 380mm or 14.9606 inches")
-    '''
+        #print(response.status_code)
+        self.assertEqual(response.json()['message'], "length can not be larger than 380mm or 14.9606 inches")
+    
+    def test_exceeds_width_limit(self):
+        tester = app.test_client(self)
+        response = requests.put(BASE + "calculator", {"length_unit" : 'mm', "width" : 300.0, "length":200.0, "weight_unit": "g", "weight": 10.0})
+        #print(response.status_code)
+        self.assertEqual(response.json()['message'], "width can not be longer than 270mm or 10.6299 inches")
+    
+    def test_exceeds_weight_limit(self):
+        tester = app.test_client(self)
+        response = requests.put(BASE + "calculator", {"length_unit" : 'mm', "width" : 100.0, "length":200.0, "weight_unit": "g", "weight": 600.0})
+        #print(response.status_code)
+        self.assertEqual(response.json()['message'], "weight can not be heavier than 500g or 17.637 ounces")
+    
 if __name__ == '__main__':
     unittest.main()
