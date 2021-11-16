@@ -110,7 +110,7 @@ def post_rate_calculation(args):
 
 
 class Calculator(Resource):
-    def put(self):
+    def get(self):
         args = input_args.parse_args()
         message = abort_if_exceeds_length_limit(args)
         if message != True and message != False: 
@@ -121,7 +121,6 @@ class Calculator(Resource):
         message = abort_if_exceeds_weight_limit(args)
         if message != False and message != True: 
             args = message
-        #print(args)
         message = post_rate_calculation(args)
         if message != False:
             args = message
